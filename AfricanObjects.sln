@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AfricanObjects", "AfricanObjects\AfricanObjects.csproj", "{B795CBD2-C4D6-45E8-9213-309424C1649E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B795CBD2-C4D6-45E8-9213-309424C1649E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B795CBD2-C4D6-45E8-9213-309424C1649E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B795CBD2-C4D6-45E8-9213-309424C1649E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B795CBD2-C4D6-45E8-9213-309424C1649E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D8421473-702E-4FB2-A7E9-C8F2E213811E}
+	EndGlobalSection
+EndGlobal
