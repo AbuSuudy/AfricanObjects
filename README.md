@@ -14,9 +14,26 @@ API's used in this project (thank you for giving me access to the stolen objects
 
 Will look to expand this over time. 
 
+## Schedule 
+
+Schedule of tweets are set up in  TweetSchedule using [cron](https://en.wikipedia.org/wiki/Cron) syntax 
+
+```c#
+
+[FunctionName("TweetSchedule")]
+public async Task Run([TimerTrigger("0 */2 * * *")]TimerInfo myTimer, ILogger log)
+{
+
+	log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+
+	await _tweetservice.StartTweeting();
+
+}
+```
+
 ## Running locally
 
-It makes use of environmental variables to store API keys and tokens in Azure this will be stored in the function configuration, but locally it's stored in local.settings.json
+It makes use of environmental variables to store API keys and tokens in Azure this will be stored in the function configuration, but locally it's stored in local.settings.json. 
 
 ```json
 {
@@ -33,6 +50,8 @@ It makes use of environmental variables to store API keys and tokens in Azure th
     }
 }
 ```
+
+
 
 ## Possible Plans
 - Post images to Instagram because it would seem to be more of a natural fit.
