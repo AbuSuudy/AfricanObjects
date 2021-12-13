@@ -16,8 +16,10 @@ namespace AfricanObjects.Service
         private string imagePostId;
         private IMuseumCollection _museumCollection;
         private static readonly string INSTAGRAM_USER_ID = Environment.GetEnvironmentVariable("INSTAGRAM_USER_ID");
-        private static readonly string INSTAGRAM_ACCESS_TOKEN = Environment.GetEnvironmentVariable("INSTAGRAM_ACCESS_TOKEN");
-      
+        private static string INSTAGRAM_ACCESS_TOKEN = Environment.GetEnvironmentVariable("INSTAGRAM_ACCESS_TOKEN");
+        private static readonly string INSTAGRAM_CLIENT_ID = Environment.GetEnvironmentVariable("INSTAGRAM_CLIENT_ID");
+        private static readonly string INSTAGRAM_CLIENT_SECRET = Environment.GetEnvironmentVariable("INSTAGRAM_CLIENT_SECRET");
+
         public InstagramService(IHttpClientFactory clientFactory, IMuseumCollection museumCollection )
         {
             client = clientFactory.CreateClient("FacebookGraphAPI");
@@ -25,18 +27,37 @@ namespace AfricanObjects.Service
 
         }
 
-        bool GetTokenInfo()
+        public async Task<bool> LongLivedToken()
         {
-            return false;
-        }
+            LongLivedTokenResponse longLivedTokenResponse = new LongLivedTokenResponse();
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/v12.0/oauth/access_token?grant_type=fb_exchange_token&client_id={INSTAGRAM_CLIENT_ID}&client_secret={INSTAGRAM_CLIENT_SECRET}&fb_exchange_token={INSTAGRAM_ACCESS_TOKEN}");
 
-        bool GetLongLivedToken()
-        {
-            return false;
+
+            HttpResponseMessage response = await client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+
+                longLivedTokenResponse = JsonConvert.DeserializeObject<LongLivedTokenResponse>(await response.Content.ReadAsStringAsync());
+
+                Environment.SetEnvironmentVariable("INSTAGRAM_ACCESS_TOKEN", longLivedTokenResponse.access_token);
+                INSTAGRAM_ACCESS_TOKEN = Environment.GetEnvironmentVariable("INSTAGRAM_ACCESS_TOKEN");
+
+                
+            }
+
+
+            return response.IsSuccessStatusCode; 
         }
 
         public async Task<bool> PostImage(string imageURL, string caption)
         {
+
+            if (Environment.GetEnvironmentVariable("INSTAGRAM_ACCESS_TOKEN") == null)
+            {
+                await LongLivedToken();
+            }
+
             PostImageResponse postImageResponse = new PostImageResponse();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"/{INSTAGRAM_USER_ID}/media?access_token={INSTAGRAM_ACCESS_TOKEN}");

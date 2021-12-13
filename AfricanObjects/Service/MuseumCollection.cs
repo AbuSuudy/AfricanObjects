@@ -35,7 +35,7 @@ namespace AfricanObjects.Service
                         {
                             museumObject = await museumServices.ElementAt(0).GetMuseumObject();
 
-                        } while (museumObject == null);
+                        } while (museumObject == null || museumObject?.Title == "Sherd");
 
                         break;
 
@@ -45,7 +45,7 @@ namespace AfricanObjects.Service
                         {
                             museumObject = await museumServices.ElementAt(1).GetMuseumObject();
 
-                        } while (museumObject == null);
+                        } while (museumObject == null || museumObject?.Title == "Sherd");
 
                         break;
 
@@ -55,7 +55,7 @@ namespace AfricanObjects.Service
                         {
                             museumObject = await metMuseumServivce.GetMuseumObject();
 
-                        } while (museumObject == null);
+                        } while (museumObject == null || museumObject?.Title == "Sherd");
 
                         break;
 

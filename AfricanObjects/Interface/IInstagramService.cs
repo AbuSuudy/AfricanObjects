@@ -12,5 +12,6 @@ namespace AfricanObjects.Interface
         Task<bool> PostImage(string imageURL, string caption);
         Task<bool> CreatPost(string imageContentId);
         Task<bool> StartGramming();
+        Task<bool> LongLivedToken();
     }
 }

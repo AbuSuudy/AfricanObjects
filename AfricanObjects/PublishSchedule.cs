@@ -19,15 +19,15 @@ namespace AfricanObjects
         //[TimerTrigger("0 */2 * * *")]  Post at the 0 minute of every 2 hours
         //[TimerTrigger("*/30 * * * * *")]  Post every 10 seconds
 
-        [FunctionName("PublishSchedule")]
-        public async Task Run([TimerTrigger("0 */2 * * *")]TimerInfo myTimer, ILogger log)
+        [FunctionName("PostPublishSchedule")]
+        public async Task PostPublishSchedule([TimerTrigger("0 */2 * * *")] TimerInfo myTimer, ILogger log)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-
+            
             await _tweetservice.StartTweeting();
 
             await _instagramservice.StartGramming();
         }
+
 
     }
 }
