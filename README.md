@@ -48,6 +48,8 @@ It makes use of environmental variables to store API keys and tokens in Azure th
         "TWITTER_ACCESS_TOKEN":"",
         "TWITTER_ACCESS_TOKEN_SECRET":"",
 	"INSTAGRAM_USER_ID": "",
+	"INSTAGRAM_CLIENT_ID": "",
+  	"INSTAGRAM_CLIENT_SECRET": "",
 	"INSTAGRAM_ACCESS_TOKEN": ""
     }
 }
