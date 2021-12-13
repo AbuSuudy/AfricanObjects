@@ -11,11 +11,10 @@ namespace AfricanObjects.Service
 {
     public class HarvardArtMuseumService : IMuseumService
     {
-        HttpClient client;
-        static Random rnd = new Random();
-        static int? pageSize;
-
-        string HARVARD_API_KEY = Environment.GetEnvironmentVariable("HARVARD_API_KEY");
+        private HttpClient client;
+        private static Random rnd = new Random();
+        private static int? pageSize;
+        private readonly string HARVARD_API_KEY = Environment.GetEnvironmentVariable("HARVARD_API_KEY");
 
         public HarvardArtMuseumService(IHttpClientFactory clientFactory)
         {
@@ -39,13 +38,13 @@ namespace AfricanObjects.Service
             }
         }
 
-        public async Task<TweetObject> GetMuseumObject()
+        public async Task<MuseumObject> GetMuseumObject()
         {
             try
             {
                 
 
-                TweetObject museumObject = new TweetObject();
+                MuseumObject museumObject = new MuseumObject();
 
                 if (pageSize == null)
                 {
@@ -73,7 +72,7 @@ namespace AfricanObjects.Service
 
                         RecordMaster recordMaster = JsonConvert.DeserializeObject<RecordMaster>(await masterResponse.Content.ReadAsStringAsync());
 
-                        if (recordMaster.Images.Count == 0)
+                        if (recordMaster?.Images?.Count == 0)
                         {
                             return null;
                         }
@@ -85,6 +84,7 @@ namespace AfricanObjects.Service
                         museumObject.objectURL = recordMaster.Url;
                         museumObject.objectImage = recordMaster.Images.FirstOrDefault().Baseimageurl;
                         museumObject.Country = recordMaster.Terms.Place.ElementAt(1).Name;
+                        museumObject.Source = "Harvard Art Museums";
 
                     }
 

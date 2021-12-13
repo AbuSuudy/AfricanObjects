@@ -20,85 +20,37 @@ namespace AfricanObjects.Service
         private readonly HttpClient client;
         private static readonly string TWITTER_CONSUMER_KEY_SECRET = Environment.GetEnvironmentVariable("TWITTER_CONSUMER_KEY_SECRET");
         private readonly string TWITTER_CONSUMER_API_KEY = Environment.GetEnvironmentVariable("TWITTER_CONSUMER_API_KEY");
-
         private readonly string TWITTER_ACCESS_TOKEN = Environment.GetEnvironmentVariable("TWITTER_ACCESS_TOKEN");
         private static readonly string TWITTER_ACCESS_TOKEN_SECRET = Environment.GetEnvironmentVariable("TWITTER_ACCESS_TOKEN_SECRET");
-
         private readonly HMACSHA1 _sigHasher = new HMACSHA1(new ASCIIEncoding().GetBytes($"{TWITTER_CONSUMER_KEY_SECRET}&{TWITTER_ACCESS_TOKEN_SECRET}"));
         private readonly DateTime _epochUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private readonly string _TwitterImageAPI = "https://upload.twitter.com/1.1/media/upload.json";
         private readonly string _TwitterTextAPI = "https://api.twitter.com/1.1/statuses/update.json";
         private static TwitterResponse uploadResponse = new TwitterResponse();
-
-
         private Random rand = new Random();
+        private IMuseumCollection museumCollection;
 
-
-
-
-        private readonly IEnumerable<IMuseumService> museumServices;
-        IMetMuseumService metMuseumServivce;
-
-        public TweetService(IHttpClientFactory clientFactory, IEnumerable<IMuseumService> museumServices, IMetMuseumService metMuseumServivce)
+        public TweetService(IHttpClientFactory clientFactory,  IMuseumCollection museumCollection)
         {
             this.client = clientFactory.CreateClient();
-            this.museumServices = museumServices;
-            this.metMuseumServivce = metMuseumServivce;
+            this.museumCollection = museumCollection;
+
 
         }
 
-        public async Task<TweetObject> StartTweeting()
-        {
-
-
-
-            TweetObject museumObject = null;
+        public async Task<MuseumObject> StartTweeting()
+        {         
             try
             {
-
-                int rnd = rand.Next(0, 3);
-
-   
-                switch (rnd)
-                {
-                    case 0:
-
-                        do
-                        {
-                            museumObject = await museumServices.ElementAt(0).GetMuseumObject();
-
-                        } while (museumObject == null);
-
-                        break;
-
-                    case 1:
-
-                        do
-                        {
-                            museumObject = await museumServices.ElementAt(1).GetMuseumObject();
-
-                        } while (museumObject == null);
-
-                        break;
-
-                    default:
-
-                        do
-                        {
-                            museumObject = await metMuseumServivce.GetMuseumObject();
-
-                        } while (museumObject == null);
-
-                        break;
-
-                }
-
+                MuseumObject museumObject = await museumCollection.GetMuseumObjectFromCollection ();
                 bool response = await UploadImage(museumObject.objectImage);
 
                 if (response)
                 {
                     await FomatTweet(museumObject);
                 }
+
+                return museumObject;
 
             }
             catch (Exception ex)
@@ -107,11 +59,9 @@ namespace AfricanObjects.Service
 
             }
 
-            return museumObject;
-
         }
 
-        public async Task<TweetObject> FomatTweet(TweetObject museumObject)
+        public async Task<MuseumObject> FomatTweet(MuseumObject museumObject)
         {
             Dictionary<string, string> tweetDictionary = new Dictionary<string, string>();
 

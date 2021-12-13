@@ -7,7 +7,7 @@ namespace AfricanObjects.Interface
     public interface ITweetService
     {
         public Task<bool> UploadImage(string imageURL);
-        public Task<TweetObject> StartTweeting();
+        public Task<MuseumObject> StartTweeting();
         public Task<bool> TweetText(string text);
         public Task<bool> SendText(string URL, Dictionary<string, string> textData);
         public string PrepareOAuth(string URL, Dictionary<string, string> data, string httpMethod);

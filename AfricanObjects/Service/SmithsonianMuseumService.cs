@@ -11,11 +11,10 @@ namespace AfricanObjects.Service
 {
     public class SmithsonianMuseumService : IMuseumService
     {
-        HttpClient client;
-        static Random rnd = new Random();
-        static int? pageSize;
-
-        string SMITHSONIAN_API_KEY = Environment.GetEnvironmentVariable("SMITHSONIAN_API_KEY");
+        private HttpClient client;
+        private static Random rnd = new Random();
+        private static int? pageSize;
+        private readonly string SMITHSONIAN_API_KEY = Environment.GetEnvironmentVariable("SMITHSONIAN_API_KEY");
 
         public SmithsonianMuseumService(IHttpClientFactory clientFactory)
         {
@@ -39,11 +38,11 @@ namespace AfricanObjects.Service
             }
         }
 
-        public async Task<TweetObject> GetMuseumObject()
+        public async Task<MuseumObject> GetMuseumObject()
         {
             try
             {
-                TweetObject museumObject = new TweetObject();
+                MuseumObject museumObject = new MuseumObject();
 
                 if (pageSize == null)
                 {
@@ -72,6 +71,7 @@ namespace AfricanObjects.Service
                     museumObject.objectURL = smithsonianMuseumObject.response.rows.FirstOrDefault().content.descriptiveNonRepeating.record_link;
                     museumObject.objectImage = smithsonianMuseumObject.response.rows.FirstOrDefault().content.descriptiveNonRepeating.online_media.media.FirstOrDefault().resources.FirstOrDefault(x => x.label == "High-resolution JPEG").url;
                     museumObject.Country = smithsonianMuseumObject.response.rows.FirstOrDefault().content.indexedStructured.geoLocation.LastOrDefault()?.L2.content;
+                    museumObject.Source = "Smithsonian";
 
                 }
 

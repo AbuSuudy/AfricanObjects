@@ -7,6 +7,8 @@ namespace AfricanObjects.Interface
     {
         public  Task GetMaxRange();
 
-        public Task<TweetObject> GetMuseumObject();
+        public Task<MuseumObject> GetMuseumObject();
+
+       
     }
 }

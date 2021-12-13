@@ -13,9 +13,7 @@ namespace AfricanObjects.Service
 {
     public  class CountryService : ICountryService
     {
-
-        private  readonly HttpClient client;
-
+        private  HttpClient client;
 
         public CountryService(IHttpClientFactory clientFactory)
         {
@@ -33,8 +31,7 @@ namespace AfricanObjects.Service
             if (response.IsSuccessStatusCode)
             {
                 listOfObjects = JsonConvert.DeserializeObject<List<Countries>>(await response.Content.ReadAsStringAsync());
-
-               
+             
             }
 
             List<string> listOfAfrican = listOfObjects.Select(x => x.name.common).ToList();

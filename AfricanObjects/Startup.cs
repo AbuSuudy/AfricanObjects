@@ -20,6 +20,8 @@ namespace AfricanObjects
             builder.Services.AddTransient<IMuseumService, SmithsonianMuseumService>();
             builder.Services.AddTransient<IMetMuseumService, TheMetMuseumService>();
             builder.Services.AddTransient<ICountryService, CountryService>();
+            builder.Services.AddTransient<IInstagramService, InstagramService>();
+            builder.Services.AddTransient<IMuseumCollection, MuseumCollection>();
 
             builder.Services.AddHttpClient("TheMet", c =>
             {
@@ -43,6 +45,13 @@ namespace AfricanObjects
             builder.Services.AddHttpClient("RestCountries", c =>
             {
                 c.BaseAddress = new Uri("https://restcountries.com/");
+
+            }).AddTransientHttpErrorPolicy(x => x.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(300)));
+
+
+            builder.Services.AddHttpClient("FacebookGraphAPI", c =>
+            {
+                c.BaseAddress = new Uri("https://graph.facebook.com/");
 
             }).AddTransientHttpErrorPolicy(x => x.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(300)));
 

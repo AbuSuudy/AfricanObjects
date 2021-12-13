@@ -43,10 +43,10 @@ namespace AfricanObjects.Service
             return 0;
         }
 
-        public async Task<TweetObject> GetMuseumObject()
+        public async Task<MuseumObject> GetMuseumObject()
         {
 
-            TweetObject museumObject = new TweetObject();
+            MuseumObject museumObject = new MuseumObject();
 
             try
             {            
@@ -79,6 +79,7 @@ namespace AfricanObjects.Service
                     museumObject.objectURL = theMetObj.objectURL;
                     museumObject.objectImage = theMetObj.primaryImage;
                     museumObject.Country = theMetObj.country;
+                    museumObject.Source = "The Met";
 
 
 

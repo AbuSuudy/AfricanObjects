@@ -5,9 +5,7 @@ namespace AfricanObjects.Interface
 {
     public interface IMetMuseumService
     {
-
         public  Task<int> GetObjectId();
-
-        public Task<TweetObject> GetMuseumObject();
+        public Task<MuseumObject> GetMuseumObject();
     }
 }
