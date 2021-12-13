@@ -110,7 +110,7 @@ namespace AfricanObjects.Service
 
                 do
                 {
-                    bool response = await PostImage(museumObject.objectImage, String.Format("{0} {1} {2} #{3}",  museumObject.Title, museumObject.objectDate, museumObject.Source, museumObject.Country));
+                    bool response = await PostImage(museumObject.objectImage, String.Format("{0} {1} {2} #{3}",  museumObject.Title, museumObject.objectDate, museumObject.Source, string.Concat(museumObject.Country.Where(c => !char.IsWhiteSpace(c)))));
 
                     if (response)
                     {
