@@ -72,11 +72,11 @@ namespace AfricanObjects.Service
 
                 imagePostId = postImageResponse.id;
 
-                return true;
+         
             }
 
-            //Instagram is strict on aspect ratio of image
-            return false;
+            //Instagram is strict on aspect ratio of image so could return false
+            return response.IsSuccessStatusCode);
         }
 
         public async Task<bool> CreatPost(string imageContentId)
@@ -90,13 +90,8 @@ namespace AfricanObjects.Service
             HttpResponseMessage response = await client.SendAsync(request);
 
 
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-
             //Instagram is strict on aspect ratio of image
-            return false;
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> StartGramming()
