@@ -76,7 +76,7 @@ namespace AfricanObjects.Service
             }
 
             //Instagram is strict on aspect ratio of image so could return false
-            return response.IsSuccessStatusCode);
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> CreatPost(string imageContentId)
