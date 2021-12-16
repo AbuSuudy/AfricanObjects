@@ -98,13 +98,14 @@ namespace AfricanObjects.Service
         {
             
             bool postImage = false;
-            Random rand = new Random();
+
             try
             {
-                MuseumObject museumObject = await _museumCollection.GetMuseumObjectFromCollection();
-
+                
                 do
                 {
+                    MuseumObject museumObject = await _museumCollection.GetMuseumObjectFromCollection();
+
                     bool response = await PostImage(museumObject.objectImage, String.Format("{0} {1} {2} #{3}",  museumObject.Title, museumObject.objectDate, museumObject.Source, string.Concat(museumObject.Country.Where(c => !char.IsWhiteSpace(c)))));
 
                     if (response)
