@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AfricanObjects.Service
@@ -50,7 +51,7 @@ namespace AfricanObjects.Service
             return response.IsSuccessStatusCode; 
         }
 
-        public async Task<bool> PostImage(string imageURL, string caption)
+        public async Task<bool> PostImage(string imageURL, string caption, CancellationToken token)
         {
 
             if (Environment.GetEnvironmentVariable("INSTAGRAM_ACCESS_TOKEN") == null)
@@ -79,7 +80,7 @@ namespace AfricanObjects.Service
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> CreatPost(string imageContentId)
+        public async Task<bool> CreatPost(string imageContentId, CancellationToken token)
         {
             PostImageResponse postImageResponse = new PostImageResponse();
 
@@ -94,7 +95,7 @@ namespace AfricanObjects.Service
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> StartGramming()
+        public async Task<bool> StartGramming(CancellationToken token)
         {
             
             bool postImage = false;
@@ -106,11 +107,11 @@ namespace AfricanObjects.Service
                 {
                     MuseumObject museumObject = await _museumCollection.GetMuseumObjectFromCollection();
 
-                    bool response = await PostImage(museumObject.objectImage, String.Format("{0} {1} {2} #{3}",  museumObject.Title, museumObject.objectDate, museumObject.Source, string.Concat(museumObject.Country.Where(c => !char.IsWhiteSpace(c)))));
+                    bool response = await PostImage(museumObject.objectImage, String.Format("{0} {1} {2} #{3}",  museumObject.Title, museumObject.objectDate, museumObject.Source, string.Concat(museumObject.Country.Where(c => !char.IsWhiteSpace(c)))), token);
 
                     if (response)
                     {
-                         postImage =  await CreatPost(imagePostId);
+                         postImage =  await CreatPost(imagePostId, token);
                     }
 
                 } while (postImage != true);

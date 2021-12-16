@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AfricanObjects.Service
@@ -38,16 +39,16 @@ namespace AfricanObjects.Service
 
         }
 
-        public async Task<MuseumObject> StartTweeting()
+        public async Task<MuseumObject> StartTweeting(CancellationToken token)
         {         
             try
             {
                 MuseumObject museumObject = await museumCollection.GetMuseumObjectFromCollection ();
-                bool response = await UploadImage(museumObject.objectImage);
+                bool response = await UploadImage(museumObject.objectImage, token);
 
                 if (response)
                 {
-                    await FomatTweet(museumObject);
+                    await FomatTweet(museumObject, token);
                 }
 
                 return museumObject;
@@ -61,7 +62,7 @@ namespace AfricanObjects.Service
 
         }
 
-        public async Task<MuseumObject> FomatTweet(MuseumObject museumObject)
+        public async Task<MuseumObject> FomatTweet(MuseumObject museumObject, CancellationToken token)
         {
             Dictionary<string, string> tweetDictionary = new Dictionary<string, string>();
 
@@ -79,7 +80,7 @@ namespace AfricanObjects.Service
                 }
             }
 
-            var tweetReponse = await TweetText($"{tweet}{museumObject.objectURL} #{museumObject.Country.Replace(" ", string.Empty)} #ArtBot");
+            var tweetReponse = await TweetText($"{tweet}{museumObject.objectURL} #{museumObject.Country.Replace(" ", string.Empty)} #ArtBot", token);
 
             if (tweetReponse)
             {
@@ -89,7 +90,7 @@ namespace AfricanObjects.Service
             return null;
         }
 
-        public async Task<bool> UploadImage(String imageurl)
+        public async Task<bool> UploadImage(String imageurl, CancellationToken token)
         {
 
             byte[] bytes = await client.GetByteArrayAsync(imageurl);
@@ -108,7 +109,7 @@ namespace AfricanObjects.Service
                 client.DefaultRequestHeaders.Remove("Authorization");
             }
 
-            client.DefaultRequestHeaders.Add("Authorization", PrepareOAuth(_TwitterImageAPI, null, "POST"));
+            client.DefaultRequestHeaders.Add("Authorization", PrepareOAuth(_TwitterImageAPI, null, "POST", token));
 
             HttpResponseMessage responseObject = await client.PostAsync("https://upload.twitter.com/1.1/media/upload.json", form);
 
@@ -123,7 +124,7 @@ namespace AfricanObjects.Service
             return responseObject.IsSuccessStatusCode;
         }
 
-        public async Task<bool> TweetText(string text)
+        public async Task<bool> TweetText(string text, CancellationToken  token)
         {
             Dictionary<string, string> textData = new Dictionary<string, string> {
                 { "status", text },
@@ -131,10 +132,10 @@ namespace AfricanObjects.Service
                 { "media_ids", uploadResponse.media_id_string}
             };
 
-            return await SendText(_TwitterTextAPI, textData);
+            return await SendText(_TwitterTextAPI, textData, token);
         }
 
-        public async Task<bool> SendText(string URL, Dictionary<string, string> textData)
+        public async Task<bool> SendText(string URL, Dictionary<string, string> textData, CancellationToken token)
         {
 
 
@@ -143,7 +144,7 @@ namespace AfricanObjects.Service
                 client.DefaultRequestHeaders.Remove("Authorization");
             }
 
-            client.DefaultRequestHeaders.Add("Authorization", PrepareOAuth(URL, textData, "POST"));
+            client.DefaultRequestHeaders.Add("Authorization", PrepareOAuth(URL, textData, "POST", token));
 
 
 
@@ -155,7 +156,7 @@ namespace AfricanObjects.Service
 
         }
 
-        public string PrepareOAuth(string URL, Dictionary<string, string> data, string httpMethod)
+        public string PrepareOAuth(string URL, Dictionary<string, string> data, string httpMethod, CancellationToken token)
         {
             // seconds passed since 1/1/1970
             int timestamp = (int)((DateTime.UtcNow - _epochUtc).TotalSeconds);
@@ -180,13 +181,13 @@ namespace AfricanObjects.Service
             }
 
             // Generate the OAuth signature and add it to our payload
-            oAuthData.Add("oauth_signature", GenerateSignature(URL, oAuthData, httpMethod));
+            oAuthData.Add("oauth_signature", GenerateSignature(URL, oAuthData, httpMethod, token));
 
             // Build the OAuth HTTP Header from the data
-            return GenerateOAuthHeader(oAuthData);
+            return GenerateOAuthHeader(oAuthData, token);
         }
 
-        public string GenerateSignature(string url, Dictionary<string, string> data, string httpMethod)
+        public string GenerateSignature(string url, Dictionary<string, string> data, string httpMethod, CancellationToken token)
         {
             string sigString = string.Join(
                 "&",
@@ -212,7 +213,7 @@ namespace AfricanObjects.Service
 
         }
 
-        public string GenerateOAuthHeader(Dictionary<string, string> data)
+        public string GenerateOAuthHeader(Dictionary<string, string> data, CancellationToken token)
         {
             return string.Format(
                 "OAuth {0}",
