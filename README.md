@@ -23,7 +23,6 @@ Schedule to send out posts are held in PublishSchedule using [cron](https://en.w
 [FunctionName("PublishSchedule")]
 public async Task Run([TimerTrigger("0 */2 * * *")]TimerInfo myTimer, ILogger log)
 {
-    log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
     await _tweetservice.StartTweeting();
 
