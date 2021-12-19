@@ -23,7 +23,7 @@ namespace AfricanObjects
         //[TimerTrigger("*/30 * * * * *")]  Post every 10 seconds
 
         [FunctionName("PostPublishSchedule")]
-        public async Task PostPublishSchedule([TimerTrigger("0 */2 * * *")] TimerInfo myTimer, ILogger log)
+        public async Task PostPublishSchedule([TimerTrigger("0 */3 * * *")] TimerInfo myTimer, ILogger log)
         {
             cancellationTokenSource.CancelAfter(TimeSpan.FromMinutes(3));
 
