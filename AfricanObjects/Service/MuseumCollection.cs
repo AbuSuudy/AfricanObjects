@@ -33,6 +33,7 @@ namespace AfricanObjects.Service
 
                         do
                         {
+                            //Harvard
                             museumObject = await museumServices.ElementAt(0).GetMuseumObject();
 
                         } while (museumObject == null || museumObject?.Title == "Sherd");
@@ -43,9 +44,10 @@ namespace AfricanObjects.Service
 
                         do
                         {
+                            //Smithsonian
                             museumObject = await museumServices.ElementAt(1).GetMuseumObject();
 
-                        } while (museumObject == null || museumObject?.Title == "Sherd");
+                        } while (museumObject == null );
 
                         break;
 
@@ -53,9 +55,10 @@ namespace AfricanObjects.Service
 
                         do
                         {
+                            //The Met
                             museumObject = await metMuseumServivce.GetMuseumObject();
 
-                        } while (museumObject == null || museumObject?.Title == "Sherd");
+                        } while (museumObject == null);
 
                         break;
 

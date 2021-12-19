@@ -69,7 +69,7 @@ namespace AfricanObjects.Service
                     museumObject.Location = smithsonianMuseumObject.response.rows.FirstOrDefault().content.freetext.place.FirstOrDefault(x => x.label == "Geography").content;
                     museumObject.objectDate = smithsonianMuseumObject.response.rows.FirstOrDefault().content.freetext.date.FirstOrDefault(x => x.label == "Date").content;
                     museumObject.objectURL = smithsonianMuseumObject.response.rows.FirstOrDefault().content.descriptiveNonRepeating.record_link;
-                    museumObject.objectImage = smithsonianMuseumObject.response.rows.FirstOrDefault().content.descriptiveNonRepeating.online_media.media.FirstOrDefault().resources.FirstOrDefault(x => x.label == "High-resolution JPEG").url;
+                    museumObject.objectImage = new List<string>() { smithsonianMuseumObject.response.rows.FirstOrDefault().content.descriptiveNonRepeating.online_media.media.FirstOrDefault().resources.FirstOrDefault(x => x.label == "High-resolution JPEG").url };
                     museumObject.Country = smithsonianMuseumObject.response.rows.FirstOrDefault().content.indexedStructured.geoLocation.LastOrDefault()?.L2.content;
                     museumObject.Source = "Smithsonian";
 

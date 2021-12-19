@@ -51,7 +51,7 @@ namespace AfricanObjects.Service
             try
             {            
                 int objectId =await GetObjectId();
-
+    
                 var request = new HttpRequestMessage(HttpMethod.Get, string.Format($"/public/collection/v1/objects/{objectId}"));
 
                 HttpResponseMessage responseObject = await client.SendAsync(request);
@@ -72,12 +72,16 @@ namespace AfricanObjects.Service
 
                     }
 
+                    List<string> images = new List<string>();
+                    images.Add(theMetObj.primaryImage);
+                    images.AddRange(theMetObj?.additionalImages.Take(3));
+
                     museumObject.Title = theMetObj.title;
                     museumObject.Culture = theMetObj.culture;
                     museumObject.Location = theMetObj.country;
                     museumObject.objectDate = theMetObj.objectDate;
                     museumObject.objectURL = theMetObj.objectURL;
-                    museumObject.objectImage = theMetObj.primaryImage;
+                    museumObject.objectImage = images;
                     museumObject.Country = theMetObj.country;
                     museumObject.Source = "The Met";
 

@@ -40,7 +40,7 @@ namespace AfricanObjects.Models
         public bool isPublicDomain { get; set; }
         public string primaryImage { get; set; }
         public string primaryImageSmall { get; set; }
-        public List<object> additionalImages { get; set; }
+        public List<string> additionalImages { get; set; }
         public object constituents { get; set; }
         public string department { get; set; }
         public string objectName { get; set; }

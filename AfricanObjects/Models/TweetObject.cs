@@ -1,4 +1,6 @@
-﻿namespace AfricanObjects.Models
+﻿using System.Collections.Generic;
+
+namespace AfricanObjects.Models
 {
     public class MuseumObject
     {
@@ -7,7 +9,7 @@
         public string Culture { get; set; }
         public string objectDate { get; set; }
         public string objectURL { get; set; }
-        public string objectImage { get; set; }
+        public List<string> objectImage { get; set; }
         public string Country { get; set; }
         public string Source { get; set; }
     }

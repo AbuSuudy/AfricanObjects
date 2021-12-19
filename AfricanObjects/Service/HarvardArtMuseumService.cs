@@ -62,7 +62,7 @@ namespace AfricanObjects.Service
 
                     HarvardArtMuseum harvardArtObj = JsonConvert.DeserializeObject<HarvardArtMuseum>(await responseObject.Content.ReadAsStringAsync());
 
-                    int id = harvardArtObj.records.FirstOrDefault().id;
+                    int id = harvardArtObj.records.FirstOrDefault().id;     
                     var masterRecordRequest = new HttpRequestMessage(HttpMethod.Get, string.Format($"/object/{id}?apikey={HARVARD_API_KEY}"));
 
                     HttpResponseMessage masterResponse = await client.SendAsync(masterRecordRequest);
@@ -72,7 +72,7 @@ namespace AfricanObjects.Service
 
                         RecordMaster recordMaster = JsonConvert.DeserializeObject<RecordMaster>(await masterResponse.Content.ReadAsStringAsync());
 
-                        if (recordMaster?.Images?.Count == 0)
+                        if (recordMaster?.Images?.Count == 0 || recordMaster?.Images?.Count == null)
                         {
                             return null;
                         }
@@ -82,7 +82,7 @@ namespace AfricanObjects.Service
                         museumObject.Location = recordMaster.Places.FirstOrDefault().Displayname;
                         museumObject.objectDate = recordMaster.Dated;
                         museumObject.objectURL = recordMaster.Url;
-                        museumObject.objectImage = recordMaster.Images.FirstOrDefault().Baseimageurl;
+                        museumObject.objectImage = recordMaster.Images?.Take(4).Select(x => x.Baseimageurl).ToList();
                         museumObject.Country = recordMaster.Terms.Place.ElementAt(1).Name;
                         museumObject.Source = "Harvard Art Museums";
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -107,7 +108,7 @@ namespace AfricanObjects.Service
                 {
                     MuseumObject museumObject = await _museumCollection.GetMuseumObjectFromCollection();
 
-                    bool response = await PostImage(museumObject.objectImage, String.Format("{0} {1} {2} #{3}",  museumObject.Title, museumObject.objectDate, museumObject.Source, string.Concat(museumObject.Country.Where(c => !char.IsWhiteSpace(c)))), token);
+                    bool response = await PostImage(museumObject.objectImage.FirstOrDefault(), String.Format("{0} {1} {2} #{3}",  museumObject.Title, museumObject.objectDate, museumObject.Source, Regex.Replace(museumObject.Country, @"[^\w]", string.Empty)), token);
 
                     if (response)
                     {

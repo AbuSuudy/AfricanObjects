@@ -2,14 +2,13 @@
 using AfricanObjects.Models;
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,11 +26,12 @@ namespace AfricanObjects.Service
         private readonly DateTime _epochUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private readonly string _TwitterImageAPI = "https://upload.twitter.com/1.1/media/upload.json";
         private readonly string _TwitterTextAPI = "https://api.twitter.com/1.1/statuses/update.json";
-        private static TwitterResponse uploadResponse = new TwitterResponse();
+        private static List<string> ImageIDs = new List<string>();
+        private List<string> imagesId = new List<string>();
         private Random rand = new Random();
         private IMuseumCollection museumCollection;
 
-        public TweetService(IHttpClientFactory clientFactory,  IMuseumCollection museumCollection)
+        public TweetService(IHttpClientFactory clientFactory, IMuseumCollection museumCollection)
         {
             this.client = clientFactory.CreateClient();
             this.museumCollection = museumCollection;
@@ -40,16 +40,20 @@ namespace AfricanObjects.Service
         }
 
         public async Task<MuseumObject> StartTweeting(CancellationToken token)
-        {         
+        {
             try
             {
-                MuseumObject museumObject = await museumCollection.GetMuseumObjectFromCollection ();
-                bool response = await UploadImage(museumObject.objectImage, token);
+                ImageIDs.Clear();
 
-                if (response)
+                MuseumObject museumObject = await museumCollection.GetMuseumObjectFromCollection();
+
+                foreach (var item in museumObject.objectImage)
                 {
-                    await FomatTweet(museumObject, token);
+                    await UploadImage(item, token);
                 }
+
+                await FomatTweet(museumObject, token);
+
 
                 return museumObject;
 
@@ -70,17 +74,17 @@ namespace AfricanObjects.Service
             tweetDictionary.Add("Location:", museumObject?.Location);
             tweetDictionary.Add("Culture:", museumObject?.Culture);
             tweetDictionary.Add("Date:", museumObject?.objectDate);
-    
+
             String tweet = null;
             foreach (var item in tweetDictionary)
             {
-                if (!string.IsNullOrEmpty(item.Value) )
+                if (!string.IsNullOrEmpty(item.Value))
                 {
                     tweet += item.Key + " " + item.Value + "\n\n";
                 }
             }
 
-            var tweetReponse = await TweetText($"{tweet}{museumObject.objectURL} #{museumObject.Country.Replace(" ", string.Empty)} #ArtBot", token);
+            var tweetReponse = await TweetText($"{tweet}{museumObject.objectURL} #{Regex.Replace(museumObject.Country, @"[^\w]", string.Empty)} #ArtBot", token);
 
             if (tweetReponse)
             {
@@ -92,7 +96,7 @@ namespace AfricanObjects.Service
 
         public async Task<bool> UploadImage(String imageurl, CancellationToken token)
         {
-
+            
             byte[] bytes = await client.GetByteArrayAsync(imageurl);
 
             ByteArrayContent byteArrayContent = new ByteArrayContent(bytes);
@@ -117,19 +121,20 @@ namespace AfricanObjects.Service
 
             if (responseObject.IsSuccessStatusCode)
             {
-                uploadResponse = JsonConvert.DeserializeObject<TwitterResponse>(response);
+                TwitterResponse uploadResponse = JsonConvert.DeserializeObject<TwitterResponse>(response);
+                ImageIDs.Add(uploadResponse.media_id_string);
 
             }
 
             return responseObject.IsSuccessStatusCode;
         }
 
-        public async Task<bool> TweetText(string text, CancellationToken  token)
+        public async Task<bool> TweetText(string text, CancellationToken token)
         {
             Dictionary<string, string> textData = new Dictionary<string, string> {
                 { "status", text },
                 { "trim_user", "1" },
-                { "media_ids", uploadResponse.media_id_string}
+                { "media_ids",string.Join(",", ImageIDs)}
             };
 
             return await SendText(_TwitterTextAPI, textData, token);
