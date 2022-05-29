@@ -3,6 +3,7 @@ using AfricanObjects.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,7 +13,6 @@ namespace AfricanObjects.Service
     {
         private readonly IEnumerable<IMuseumService> museumServices;
         private readonly IMetMuseumService metMuseumServivce;
-        private static Random rand = new Random();
 
         public MuseumCollection(IEnumerable<IMuseumService> museumServices, IMetMuseumService metMuseumServivce)
         {
@@ -25,7 +25,7 @@ namespace AfricanObjects.Service
             MuseumObject museumObject = null;
             try
             {
-                int rnd = rand.Next(0, 3);
+                int rnd = RandomNumberGenerator.GetInt32(0,3);
 
                 switch (rnd)
                 {

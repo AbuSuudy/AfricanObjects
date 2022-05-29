@@ -17,8 +17,7 @@ namespace AfricanObjects
             _instagramservice = instagramService;
         }
 
-        //[TimerTrigger(""0 0 1 * *")] 
-        //[TimerTrigger("*/30 * * * * *")]  Post every 10 seconds
+        //Every month
         [FunctionName("InstagramTokenRefresh")]
         public async Task Run([TimerTrigger("0 0 1 * *")]TimerInfo myTimer, ILogger log)
         {

@@ -28,7 +28,6 @@ namespace AfricanObjects.Service
         private readonly string _TwitterTextAPI = "https://api.twitter.com/1.1/statuses/update.json";
         private static List<string> ImageIDs = new List<string>();
         private List<string> imagesId = new List<string>();
-        private Random rand = new Random();
         private IMuseumCollection museumCollection;
 
         public TweetService(IHttpClientFactory clientFactory, IMuseumCollection museumCollection)

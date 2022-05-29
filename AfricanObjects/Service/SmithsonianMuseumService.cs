@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace AfricanObjects.Service
@@ -12,7 +13,6 @@ namespace AfricanObjects.Service
     public class SmithsonianMuseumService : IMuseumService
     {
         private HttpClient client;
-        private static Random rnd = new Random();
         private static int? pageSize;
         private readonly string SMITHSONIAN_API_KEY = Environment.GetEnvironmentVariable("SMITHSONIAN_API_KEY");
 
@@ -49,7 +49,7 @@ namespace AfricanObjects.Service
                     await GetMaxRange();
                 }
 
-                int pageNumber = rnd.Next(0, pageSize.Value);
+                int pageNumber =  RandomNumberGenerator.GetInt32(0, pageSize.Value + 1);
 
                 var request = new HttpRequestMessage(HttpMethod.Get, string.Format($"search?api_key={SMITHSONIAN_API_KEY}&rows=1&start={pageNumber}&q=unit_code:NMAfA"));
 
@@ -60,7 +60,7 @@ namespace AfricanObjects.Service
                     SmithsonianMuseumObject smithsonianMuseumObject = JsonConvert.DeserializeObject<SmithsonianMuseumObject>(await responseObject.Content.ReadAsStringAsync());
      
 
-                    if (smithsonianMuseumObject.response.rows.FirstOrDefault().content.descriptiveNonRepeating.online_media.mediaCount == 0)
+                    if (smithsonianMuseumObject.response.rows.Count() ==0  ||smithsonianMuseumObject.response.rows.FirstOrDefault()?.content.descriptiveNonRepeating.online_media.mediaCount == 0)
                     {
                         return null;
                     }
@@ -82,6 +82,6 @@ namespace AfricanObjects.Service
             {
                 return null;
             }
-        }
+             }
     }
 }

@@ -13,7 +13,6 @@ namespace AfricanObjects.Service
     public class TheMetMuseumService : IMetMuseumService
     {
         private HttpClient client;
-        private static Random rnd = new Random();
         private static List<string> countries;
         private  ICountryService countryService;
 

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace AfricanObjects.Service
@@ -12,7 +13,6 @@ namespace AfricanObjects.Service
     public class HarvardArtMuseumService : IMuseumService
     {
         private HttpClient client;
-        private static Random rnd = new Random();
         private static int? pageSize;
         private readonly string HARVARD_API_KEY = Environment.GetEnvironmentVariable("HARVARD_API_KEY");
 
@@ -51,7 +51,8 @@ namespace AfricanObjects.Service
                     await GetMaxRange();
                 }
 
-                int pageNumber = rnd.Next(0, pageSize.Value);
+
+                int pageNumber = RandomNumberGenerator.GetInt32(0, pageSize.Value + 1);
 
                 var request = new HttpRequestMessage(HttpMethod.Get, string.Format($"/object?apikey={HARVARD_API_KEY}&size=1&page={pageNumber}&place=2029200"));
 
@@ -71,8 +72,8 @@ namespace AfricanObjects.Service
                     {
 
                         RecordMaster recordMaster = JsonConvert.DeserializeObject<RecordMaster>(await masterResponse.Content.ReadAsStringAsync());
-
-                        if (recordMaster?.Images?.Count == 0 || recordMaster?.Images?.Count == null)
+              
+                        if (recordMaster?.Images?.Count == 0 || recordMaster?.Images?.Count == null || recordMaster?.Id == 94687)
                         {
                             return null;
                         }
