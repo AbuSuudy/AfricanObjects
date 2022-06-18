@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.RegularExpressions;
@@ -52,13 +53,8 @@ namespace AfricanObjects.Service
             return response.IsSuccessStatusCode; 
         }
 
-        public async Task<bool> PostImage(string imageURL, string caption, CancellationToken token)
+        public async Task<bool> PostImage(string imageURL, string caption, int locationId, CancellationToken token)
         {
-
-            if (Environment.GetEnvironmentVariable("INSTAGRAM_ACCESS_TOKEN") == null)
-            {
-                await LongLivedToken();
-            }
 
             PostImageResponse postImageResponse = new PostImageResponse();
 
@@ -73,7 +69,6 @@ namespace AfricanObjects.Service
                 postImageResponse = JsonConvert.DeserializeObject<PostImageResponse>(await response.Content.ReadAsStringAsync());
 
                 imagePostId = postImageResponse.id;
-
          
             }
 
@@ -108,7 +103,9 @@ namespace AfricanObjects.Service
                 {
                     MuseumObject museumObject = await _museumCollection.GetMuseumObjectFromCollection();
 
-                    bool response = await PostImage(museumObject.objectImage.FirstOrDefault(), String.Format("{0} {1} {2} #{3}",  museumObject.Title, museumObject.objectDate, museumObject.Source, Regex.Replace(museumObject.Country, @"[^\w]", string.Empty)), token);
+                    //int locationID = await GetLocation(museumObject.Country);
+
+                    bool response = await PostImage(museumObject.objectImage.FirstOrDefault(), String.Format("{0} {1} {2} #{3}",  museumObject.Title, museumObject.objectDate, museumObject.Source, Regex.Replace(museumObject.Country, @"[^\w]", string.Empty)),0, token);
 
                     if (response)
                     {
@@ -126,6 +123,23 @@ namespace AfricanObjects.Service
             }
 
             return postImage;
-        }      
+        }
+
+        public async Task<int> GetLocation(string location)
+        {
+
+            if (Environment.GetEnvironmentVariable("INSTAGRAM_ACCESS_TOKEN") == null)
+            {
+                await LongLivedToken();
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"pages/search?q={location}&fields=location&access_token={INSTAGRAM_ACCESS_TOKEN}");
+
+            HttpResponseMessage response = await client.SendAsync(request);
+
+            var a = await response.Content.ReadAsStringAsync();
+
+            return 1;
+        }
     }
 }

@@ -22,15 +22,16 @@ namespace AfricanObjects
         //[TimerTrigger("0 */3 * * *")]  Post at the 0 minute of every 3 hours
         //[TimerTrigger("*/30 * * * * *")]  Post every 10 seconds
         [FunctionName("PostPublishSchedule")]
-        public async Task PostPublishSchedule([TimerTrigger("0 */3 * * *")] TimerInfo myTimer, ILogger log)
+        public async Task PostPublishSchedule([TimerTrigger("0 */2 * * *")] TimerInfo myTimer, ILogger log)
         {
             cancellationTokenSource.CancelAfter(TimeSpan.FromMinutes(3));
 
             CancellationToken token = cancellationTokenSource.Token;
 
-            await _instagramservice.StartGramming(token);
 
             await _tweetservice.StartTweeting(token);
+            
+            await _instagramservice.StartGramming(token);
 
             
         }

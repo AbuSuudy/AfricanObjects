@@ -10,9 +10,10 @@ namespace AfricanObjects.Interface
 {
     public interface IInstagramService
     {
-        Task<bool> PostImage(string imageURL, string caption, CancellationToken token);
+        Task<bool> PostImage(string imageURL, string caption, int locationId, CancellationToken token);
         Task<bool> CreatPost(string imageContentId, CancellationToken token);
         Task<bool> StartGramming(CancellationToken token);
         Task<bool> LongLivedToken();
+        Task<int> GetLocation(string location);
     }
 }

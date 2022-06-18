@@ -17,9 +17,10 @@ namespace AfricanObjects
             _instagramservice = instagramService;
         }
 
-        //Every month
+        //Every month// 0 0 1 * *
+        //Every Two Days //0 0 2 * *
         [FunctionName("InstagramTokenRefresh")]
-        public async Task Run([TimerTrigger("0 0 1 * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 2 * *")]TimerInfo myTimer, ILogger log)
         {
             await _instagramservice.LongLivedToken();
         }
