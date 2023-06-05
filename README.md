@@ -1,5 +1,5 @@
 
-![alt text](https://pbs.twimg.com/profile_banners/1450557845359972360/1636418340/1500x500)
+![alt text](https://user-images.githubusercontent.com/15980314/212194101-d5c7095d-017a-470b-a80a-33b2b3c71c15.jpg)
 
 ## What is African Objects?
 
