@@ -4,7 +4,7 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using System;
-using System.IO;
+
 
 [assembly: FunctionsStartup(typeof(AfricanObjects.Startup))]
 
