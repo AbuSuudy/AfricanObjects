@@ -53,10 +53,4 @@ It makes use of environmental variables to store API keys and tokens in Azure th
     }
 }
 ```
-## Songs that got me though this project
-
-![alt text](https://i.imgur.com/NQ0LHU1.png)
-
-## Possible Plans
-- Create an African Objects NuGet package to centralise access to all these apis.
 
