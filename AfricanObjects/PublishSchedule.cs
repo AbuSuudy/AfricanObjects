@@ -19,15 +19,17 @@ namespace AfricanObjects
             _instagramservice = instagramService;
         }
 
-        //[TimerTrigger("0 */3 * * *")]  Post at the 0 minute of every 3 hours
-        //[TimerTrigger("*/30 * * * * *")]  Post every 10 seconds
+        //https://arminreiter.com/2017/02/azure-functions-time-trigger-cron-cheat-sheet/
+        //[TimerTrigger("0 0 * * * *)]  Post at the 0 minute of every hour
+        //[TimerTrigger("*/2 * * * * *")]  Post every 2 seconds
         [FunctionName("PostPublishSchedule")]
-        public async Task PostPublishSchedule([TimerTrigger("0 */2 * * *")] TimerInfo myTimer, ILogger log)
+        public async Task PostPublishSchedule([TimerTrigger("0 0 * * * *")] TimerInfo myTimer, ILogger log)
         {
             cancellationTokenSource.CancelAfter(TimeSpan.FromMinutes(3));
 
             CancellationToken token = cancellationTokenSource.Token;
 
+            //await _instagramservice.LongLivedToken();
 
             await _tweetservice.StartTweeting(token);
             
