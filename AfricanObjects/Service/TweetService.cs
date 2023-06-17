@@ -84,7 +84,7 @@ namespace AfricanObjects.Service
                 }
             }
 
-            var tweetReponse = await TweetText($"{tweet}{museumObject.objectURL} #{Regex.Replace(museumObject.Country, @"[^\w]", string.Empty)} #ArtBot", token);
+            var tweetReponse = await TweetText($"{tweet}{museumObject.objectURL} \n\n #{Regex.Replace(museumObject.Country, @"[^\w]", string.Empty)} #ArtBot", token);
 
             if (tweetReponse)
             {

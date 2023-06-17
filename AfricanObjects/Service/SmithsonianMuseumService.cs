@@ -65,12 +65,14 @@ namespace AfricanObjects.Service
                         return null;
                     }
 
-                    museumObject.Title = smithsonianMuseumObject.response.rows.FirstOrDefault().title;
-                    museumObject.Location = smithsonianMuseumObject.response.rows.FirstOrDefault().content.freetext.place.FirstOrDefault(x => x.label == "Geography").content;
-                    museumObject.objectDate = smithsonianMuseumObject.response.rows.FirstOrDefault().content.freetext.date.FirstOrDefault(x => x.label == "Date").content;
-                    museumObject.objectURL = smithsonianMuseumObject.response.rows.FirstOrDefault().content.descriptiveNonRepeating.record_link;
-                    museumObject.objectImage = new List<string>() { smithsonianMuseumObject.response.rows.FirstOrDefault().content.descriptiveNonRepeating.online_media.media.FirstOrDefault().resources.FirstOrDefault(x => x.label == "High-resolution JPEG").url };
-                    museumObject.Country = smithsonianMuseumObject.response.rows.FirstOrDefault().content.indexedStructured.geoLocation.LastOrDefault()?.L2.content;
+                    var smithosnianData = smithsonianMuseumObject.response.rows.FirstOrDefault();
+
+                    museumObject.Title = smithosnianData.title;
+                    museumObject.Location = smithosnianData.content.freetext.place.FirstOrDefault(x => x.label == "Geography").content;
+                    museumObject.objectDate = smithosnianData.content.freetext.date.FirstOrDefault(x => x.label == "Date").content;
+                    museumObject.objectURL = $"https://www.si.edu/object/{smithosnianData.url}";
+                    museumObject.objectImage = new List<string>() { smithosnianData.content.descriptiveNonRepeating.online_media.media.FirstOrDefault().resources.FirstOrDefault(x => x.label == "High-resolution JPEG").url};
+                    museumObject.Country = smithosnianData.content.indexedStructured.geoLocation.LastOrDefault()?.L2.content;
                     museumObject.Source = "Smithsonian";
 
                 }
