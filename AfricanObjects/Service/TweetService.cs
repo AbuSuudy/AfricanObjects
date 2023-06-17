@@ -1,6 +1,6 @@
 ﻿using AfricanObjects.Interface;
 using AfricanObjects.Models;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +11,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
+using System.Text.Json;
 
 namespace AfricanObjects.Service
 {
@@ -25,7 +27,7 @@ namespace AfricanObjects.Service
         private readonly HMACSHA1 _sigHasher = new HMACSHA1(new ASCIIEncoding().GetBytes($"{TWITTER_CONSUMER_KEY_SECRET}&{TWITTER_ACCESS_TOKEN_SECRET}"));
         private readonly DateTime _epochUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private readonly string _TwitterImageAPI = "https://upload.twitter.com/1.1/media/upload.json";
-        private readonly string _TwitterTextAPI = "https://api.twitter.com/1.1/statuses/update.json";
+        private readonly string _TwitterTextAPI = "https://api.twitter.com/2/tweets";
         private static List<string> ImageIDs = new List<string>();
         private List<string> imagesId = new List<string>();
         private IMuseumCollection museumCollection;
@@ -120,7 +122,7 @@ namespace AfricanObjects.Service
 
             if (responseObject.IsSuccessStatusCode)
             {
-                TwitterResponse uploadResponse = JsonConvert.DeserializeObject<TwitterResponse>(response);
+                TwitterResponse uploadResponse = JsonSerializer.Deserialize<TwitterResponse>(response);
                 ImageIDs.Add(uploadResponse.media_id_string);
 
             }
@@ -130,16 +132,23 @@ namespace AfricanObjects.Service
 
         public async Task<bool> TweetText(string text, CancellationToken token)
         {
-            Dictionary<string, string> textData = new Dictionary<string, string> {
-                { "status", text },
-                { "trim_user", "1" },
-                { "media_ids",string.Join(",", ImageIDs)}
-            };
+          
 
-            return await SendText(_TwitterTextAPI, textData, token);
+            MediaTweet mediaTweet = new MediaTweet
+            {
+                text = text,
+
+                media = new Media
+                {
+                    media_ids = ImageIDs
+                }
+            };
+            
+
+            return await SendText(_TwitterTextAPI, mediaTweet, token);
         }
 
-        public async Task<bool> SendText(string URL, Dictionary<string, string> textData, CancellationToken token)
+        public async Task<bool> SendText(string URL, MediaTweet media, CancellationToken token)
         {
 
 
@@ -148,13 +157,17 @@ namespace AfricanObjects.Service
                 client.DefaultRequestHeaders.Remove("Authorization");
             }
 
+            Dictionary<string, string> textData = new Dictionary<string, string> {
+                { "text", media.text },
+                { "media_ids",string.Join(",", ImageIDs)}
+            };
+
             client.DefaultRequestHeaders.Add("Authorization", PrepareOAuth(URL, textData, "POST", token));
 
 
+            string jsonString = JsonSerializer.Serialize(media);
 
-
-            HttpResponseMessage httpResponse = await client.PostAsync(URL, new FormUrlEncodedContent(textData));
-            string httpContent = await httpResponse.Content.ReadAsStringAsync();
+            HttpResponseMessage httpResponse = await client.PostAsJsonAsync(URL, media);
 
             return httpResponse.IsSuccessStatusCode;
 
@@ -169,20 +182,20 @@ namespace AfricanObjects.Service
             Dictionary<string, string> oAuthData = new Dictionary<string, string>
             {
                 { "oauth_consumer_key", TWITTER_CONSUMER_API_KEY },
+                { "oauth_token", TWITTER_ACCESS_TOKEN },
                 { "oauth_signature_method", "HMAC-SHA1" },
                 { "oauth_timestamp", timestamp.ToString() },
                 { "oauth_nonce", Guid.NewGuid().ToString() },
-                { "oauth_token", TWITTER_ACCESS_TOKEN },
                 { "oauth_version", "1.0" }
             };
 
-            if (data != null) // add text data too, because it is a part of the signature
+           /* if (data != null) // add text data too, because it is a part of the signature
             {
                 foreach (KeyValuePair<string, string> item in data)
                 {
                     oAuthData.Add(item.Key, item.Value);
                 }
-            }
+            }*/
 
             // Generate the OAuth signature and add it to our payload
             oAuthData.Add("oauth_signature", GenerateSignature(URL, oAuthData, httpMethod, token));
