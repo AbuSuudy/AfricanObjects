@@ -14,6 +14,7 @@ namespace AfricanObjects.Service
         private readonly IEnumerable<IMuseumService> museumServices;
         private readonly IMetMuseumService metMuseumServivce;
 
+
         public MuseumCollection(IEnumerable<IMuseumService> museumServices, IMetMuseumService metMuseumServivce)
         {
             this.museumServices = museumServices;
@@ -26,6 +27,7 @@ namespace AfricanObjects.Service
             try
             {
                 int rnd = RandomNumberGenerator.GetInt32(0,3);
+                bool harvardSkip ;
 
                 switch (rnd)
                 {
@@ -33,10 +35,14 @@ namespace AfricanObjects.Service
 
                         do
                         {
+                            //Large volume of Sherd and Folio in Harvard Archieve so will skip them intermittently for more diversity of posts 
+                            harvardSkip = Convert.ToBoolean(RandomNumberGenerator.GetInt32(0, 2));
+
                             //Harvard
                             museumObject = await museumServices.ElementAt(0).GetMuseumObject();
 
-                        } while (museumObject == null || museumObject?.Title == "Sherd");
+
+                        } while (museumObject == null || harvardSkip && (museumObject?.Title == "Sherd" || museumObject.Title.Contains("Folio")));
 
                         break;
 
@@ -71,7 +77,7 @@ namespace AfricanObjects.Service
 
             }
 
-            return museumObject;
+            return museumObject; 
 
         }
 
