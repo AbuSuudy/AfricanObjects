@@ -32,7 +32,7 @@ public async Task Run([TimerTrigger("0 */3 * * *")]TimerInfo myTimer, ILogger lo
 
 ## Running locally
 
-It makes use of environmental variables to store API keys and tokens in Azure this will be stored in the function configuration, but locally it's stored in local.settings.json. 
+It makes use of environmental variables to store API keys and tokens in Azure this will be stored in the function configuration, but locally it's stored in local.settings.json. You would need to register with these platforms and museums to get keys to use their service.
 
 ```json
 {
