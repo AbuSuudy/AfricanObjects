@@ -3,11 +3,11 @@
 
 ## What is African Objects?
 
-African Objects is a bot on [Twitter](https://twitter.com/AfricanObjects/) and [Instagram](https://www.instagram.com/africanobjects/) that posts images of African Art. Currently being hosted as an Azure function and a timer trigger to send out a post.
+African Objects is a bot on [Twitter](https://twitter.com/AfricanObjects/) and [Instagram](https://www.instagram.com/africanobjects/) that posts images of African Art. Currently being hosted as an Azure function on a timer trigger to send out a post.
 
 ## Data
 
-Data is provided by the following API's (thank you for giving me access to the stolen objects) :
+Data is provided by the following API's :
 - [The Met](https://metmuseum.github.io/)
 - [Smithsonian Art Insitute](http://edan.si.edu/openaccess/apidocs/)
 - [Harvard Art Museum](https://github.com/harvardartmuseums/api-docs)
